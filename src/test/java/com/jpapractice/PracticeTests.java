@@ -1,9 +1,11 @@
 package com.jpapractice;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -11,6 +13,9 @@ import java.util.stream.Stream;
 
 @SpringBootTest
 public class PracticeTests {
+
+    @Autowired
+    private ProductRegistService productRegistService;
 
     private static Stream<Arguments> newPhone(){
         return Stream.of(
@@ -37,7 +42,7 @@ public class PracticeTests {
 
     @DisplayName("테이블 만들기 테스트")
     @ParameterizedTest
-    @MethodSource("createMember")
+    @MethodSource("newPhone")
     void testCreateTable(int productNo, String productName, String manufacturer, int price, LocalDate releaseDate, double screenSize,
                          OperatingSys operatingSys, int battery){
         ProductRegistDTO productInfo = new ProductRegistDTO(
@@ -48,6 +53,9 @@ public class PracticeTests {
                 screenSize,
                 operatingSys,
                 battery
+        );
+        Assertions.assertDoesNotThrow(
+                () -> productRegistService.registProduct(productInfo)
         );
     }
 
